@@ -23,3 +23,5 @@ app.get("/api/notes", function(req,res) {
 
 })
 
+
+app.listen()
