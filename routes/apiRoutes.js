@@ -1,15 +1,15 @@
-var noteData = require("../db.json");
+// var noteData = require("../db.json");
 const fs = require("fs");
 const util = require("util");
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile)
-let allNotes;
+var allNotes;
 module.exports = function (app) {
 
   app.get("/api/notes", function (req, res) {
-    readFileAsync('../db/db.json').then(function (data) {
+    readFileAsync('db/db.json').then(function (data) {
       try {
-        res.json(data)
+        res.json(JSON.parse(data))
 
       } catch (err) {
         console.log(err)
@@ -21,25 +21,34 @@ module.exports = function (app) {
     try {
 
       let newNote = req.body;
-      readFileAsync('../db/db.json').then(function (data) {
+      readFileAsync('db/db.json').then(function (data) {
+
+        console.log("----------");
+        console.log(JSON.parse(data));
+        console.log("----------");
         allNotes = JSON.parse(data)
-      })
+        // allNotes = data;
 
-      // This means you'll need to find a way to give each note a unique `id` when it's saved.
-      //recreate id;
-      // let newNoteId = allNotes.length + 1;
-      //set the new id = 0 if json file is empty, if not empty, new id = id of the last item +1;
-      let newNoteId = 0;
+        // This means you'll need to find a way to give each note a unique `id` when it's saved.
+        //recreate id;
+        // let newNoteId = allNotes.length + 1;
+        //set the new id = 0 if json file is empty, if not empty, new id = id of the last item +1;
+        let newNoteId = 0;
+        console.log(allNotes);
+        if (allNotes.length === 0) {
 
-      if (allNotes.length === 0) {
-
-      } else {
-        newNoteId = allNotes[allNotes.length - 1].id + 1;
-      }
-      newNote['id'] = newNoteId;
-      allNotes.push(newNote);
-      writeFileAsync('../db/db.json', allNotes).then(function () {
-        res.json(newNote);
+        } else {
+          newNoteId = parseInt(allNotes[allNotes.length - 1].id) + 1;
+        }
+        newNote['id'] = newNoteId;
+        allNotes.push(newNote);
+        // writeFileAsync('db/db.json', allNotes).then(function () {
+        //   res.json(newNote);
+        // })
+        fs.writeFile('db/db.json', JSON.stringify(allNotes), (err, data) => {
+          if (err) throw err;
+          console.log("New note added");
+        })
       })
     } catch (err) {
       console.log(err)
@@ -49,17 +58,22 @@ module.exports = function (app) {
 
   // when someone comes to this route w/ a delete req
   app.delete("/api/notes/:id", function (req, res) {
+    let deleteId = parseInt(req.params.id);
     try {
-      let deleteId = req.params.id;
-      readFileAsync('../db/db.json').then(function (data) {
+      readFileAsync('db/db.json').then(function (data) {
         allNotes = JSON.parse(data)
-      });
-      allNotes = allNotes.filter(note=>{
-        return note.id != deleteId;
-      })
-      writeFileAsync('../db/db.json',allNotes).then(function(){
-        res.json(allNotes)
-      })
+        allNotes = allNotes.filter(note => {
+          return note.id != deleteId;
+        });
+        // writeFileAsync('db/db.json',allNotes).then(function(){
+        //   res.json(allNotes)
+        // })
+        fs.writeFile('db/db.json', JSON.stringify(allNotes), (err, data) => {
+          if (err) throw err;
+          console.log("Selected note is deleted");
+        })
+      }
+      );
     } catch (err) {
       console.log(err)
     }
