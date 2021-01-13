@@ -14,7 +14,7 @@ const path = require('path');
 var app = express();
 
 // Sets an initial port. We"ll use this later in our listener
-var PORT =3000;
+const PORT = process.env.PORT || 3003;
 // app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
