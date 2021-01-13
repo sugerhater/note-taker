@@ -42,14 +42,12 @@ module.exports = function (app) {
         }
         newNote['id'] = newNoteId;
         allNotes.push(newNote);
-        writeFileAsync('db/db.json', JSON.stringify(allNotes));
-        // .then(function () {
-        //   res.json(newNote);
-        // })
-        // fs.writeFile('db/db.json', JSON.stringify(allNotes), (err, data) => {
-        //   if (err) throw err;
-        //   console.log("New note added");
-        // })
+        // writeFileAsync('db/db.json', JSON.stringify(allNotes));
+    
+        fs.writeFile('db/db.json', JSON.stringify(allNotes), (err, data) => {
+          if (err) throw err;
+          console.log("New note added");
+        })
       })
     } catch (err) {
       console.log(err)
@@ -66,11 +64,11 @@ module.exports = function (app) {
         allNotes = allNotes.filter(note => {
           return note.id != deleteId;
         });
-        writeFileAsync('db/db.json',JSON.stringify(allNotes));
-        // fs.writeFile('db/db.json', JSON.stringify(allNotes), (err, data) => {
-        //   if (err) throw err;
-        //   console.log("Selected note is deleted");
-        // })
+        // writeFileAsync('db/db.json',JSON.stringify(allNotes));
+        fs.writeFile('db/db.json', JSON.stringify(allNotes), (err, data) => {
+          if (err) throw err;
+          console.log("Selected note is deleted");
+        })
       }
       );
     } catch (err) {
